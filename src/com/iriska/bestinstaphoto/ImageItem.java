@@ -4,16 +4,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-public class ImageItem implements Parcelable {
+public class ImageItem implements Parcelable, Comparable<ImageItem> {
 
 	private String thumbnail;
 	private String source;
-	private long createdtime;
+	private int likes;
 
-	public ImageItem(String thumbnail, String source, long createdtime) {
+	public ImageItem(String thumbnail, String source, int likes_count) {
 		this.thumbnail = thumbnail;
 		this.source = source;
-		this.createdtime = createdtime;
+		this.likes = likes_count;
 	}
 
 	public String getThumbnail() {
@@ -24,20 +24,16 @@ public class ImageItem implements Parcelable {
 		this.thumbnail = thumbnail;
 	}
 	
-	public long getCreateddate() {
-		return createdtime;
-	}
-
-	public void setCreatedDtae(long createdtime) {
-		this.createdtime = createdtime;
-	}
-
 	public String getSource() {
 		return source;
 	}
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+	
+	public int getLikesCount() {
+		return likes;
 	}
 
 	@Override
@@ -58,8 +54,7 @@ public class ImageItem implements Parcelable {
 		Log.d("parsel", "writingTo..");
 		dest.writeString(thumbnail);
 		dest.writeString(source);
-		dest.writeLong(createdtime);
-
+		dest.writeInt(likes);
 	}
 
 	public static final Parcelable.Creator<ImageItem> CREATOR = new Parcelable.Creator<ImageItem>() {
@@ -77,7 +72,12 @@ public class ImageItem implements Parcelable {
 		Log.d("parsel", "MyObject(Parcel parcel)");
 		thumbnail = parcel.readString();
 		source = parcel.readString();
-		createdtime = parcel.readLong();
+		likes=parcel.readInt();
+	}
+
+	@Override
+	public int compareTo(ImageItem img) {
+		return likes - img.likes;
 	}
 
 }

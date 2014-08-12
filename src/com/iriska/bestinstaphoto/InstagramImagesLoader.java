@@ -1,7 +1,10 @@
 package com.iriska.bestinstaphoto;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -20,10 +23,9 @@ import android.util.Log;
 public class InstagramImagesLoader extends
 		AsyncTask<String, ImageItem[], ImageItem[]> {
 
-	private String insta_token;
 	private String LOGTAG = "instadebug";
-
 	Context context;
+	int numofbestimages = 6;
 
 	private ProgressDialog dialog;
 
@@ -36,24 +38,12 @@ public class InstagramImagesLoader extends
 
 		dialog = new ProgressDialog(ctx);
 
-		/*
-		 * SharedPreferences prefs = PreferenceManager
-		 * .getDefaultSharedPreferences(context); if
-		 * (prefs.getString("insta_token", "") == "") { InstaLoginDialog
-		 * insta_login = new InstaLoginDialog(); Bundle args = new Bundle();
-		 * args.putLong("startdate", dates[0]); args.putLong("enddate",
-		 * dates[1]); insta_login.setArguments(args);
-		 * insta_login.setStyle(DialogFragment.STYLE_NORMAL, 0);
-		 * insta_login.setCancelable(false);
-		 * insta_login.show(MainFragment.getInstance().getFragmentManager(),
-		 * "InstagramLoginDialog"); } else { insta_token =
-		 * prefs.getString("insta_token", ""); insta_id =
-		 * prefs.getString("insta_id", ""); }
-		 */
-	}
+			}
 
 	// for array which is associated with Gridview
-	ImageItem[] images;
+	List<ImageItem> images = new ArrayList<ImageItem>();
+
+	//ImageItem[] images;
 	String accessToken;
 
 	protected void onPreExecute() {
@@ -68,15 +58,15 @@ public class InstagramImagesLoader extends
 
 		String user_name = username[0];
 		String query;
-		String userId = SearchUserId(insta_token, user_name);
-		if (user_name != null) {
+		String userId = SearchUserId(accessToken, user_name);
+		if (userId != null) {
 			query = "https://api.instagram.com/v1/users/" + userId
-					+ "/media/recent?access_token=" + insta_token + "&count=-1";
-			GetUserMedia(insta_token, query);
-
-			images = GetUserMedia(insta_token, query);
+					+ "/media/recent?access_token=" + accessToken + "&count=-1";
+			
+			images = GetUserMedia(accessToken, query);
+			
 		}
-		return images;
+		return images.toArray(new ImageItem[images.size()]);
 	}
 
 	@Override
@@ -91,26 +81,10 @@ public class InstagramImagesLoader extends
 			dialog.dismiss();
 			dialog = null;
 		}
-		int i = 0;
-		if (result != null) {
-			while (i < result.length) {
-				Long seconds = result[i].getCreateddate();
-				Long millis = seconds * 1000;
-				Date date = new Date(millis);
-				Log.d(LOGTAG,
-						"images" + i + " result url "
-								+ result[i].getThumbnail() + ", date "
-								+ date.toGMTString());
-				i++;
-
-			}
-		}
-		// (PictureSelect.instagram);
-
 	}
 
 	// this method gets user Media. uses access token and user id as paramters
-	protected ImageItem[] GetUserMedia(String _insta_token, String url) {
+	protected List<ImageItem> GetUserMedia(String _insta_token, String url) {
 		// Creating HTTP client
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 
@@ -125,18 +99,19 @@ public class InstagramImagesLoader extends
 			JSONObject retrieved = new JSONObject(responseBody);
 			JSONArray imageObjs = retrieved.getJSONArray("data");
 
-			images = new ImageItem[imageObjs.length()];
+			//images = new ImageItem[imageObjs.length()];
 			for (int r = 0; r < imageObjs.length(); r++) {
 				// get "images" Object
-				images[r] = new ImageItem(imageObjs.getJSONObject(r)
-						.getJSONObject("images").getJSONObject("thumbnail")
-						.getString("url"), imageObjs.getJSONObject(r)
-						.getJSONObject("images")
-						.getJSONObject("standard_resolution").getString("url"),
-						imageObjs.getJSONObject(r).getLong("created_time"));
-				publishProgress(images);
-
+				JSONObject currentItem = imageObjs.getJSONObject(r);
+				images.add( new ImageItem(
+						currentItem.getJSONObject("images").getJSONObject("thumbnail").getString("url"), 
+						currentItem.getJSONObject("images").getJSONObject("standard_resolution").getString("url"),
+						currentItem.getJSONObject("likes").getInt("count")));
 			}
+			Collections.sort(images);
+			
+			images.subList( 0, images.size() - 1 - numofbestimages).clear();
+
 
 		} catch (ClientProtocolException e) {
 			// writing exception to log
@@ -165,9 +140,12 @@ public class InstagramImagesLoader extends
 			HttpResponse response = httpClient.execute(httpget);
 			String responseBody = EntityUtils.toString(response.getEntity());
 			JSONObject retrieved = new JSONObject(responseBody);
-			JSONObject data = retrieved.getJSONObject("data");
-			user_id = data.getString("id");
-
+			JSONArray data = retrieved.getJSONArray("data");
+			if (data!= null && data.length()>0)
+			{
+				user_id = data.getJSONObject(0).getString("id");
+			}
+			
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 
