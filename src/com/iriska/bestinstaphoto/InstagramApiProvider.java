@@ -14,9 +14,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Works with Instagram Api
+ *
+ */
 public class InstagramApiProvider {
 	List<ImageItem> images = new ArrayList<ImageItem>();
 	
+	
+	/**
+	 * @param _insta_token instagram acces token for oauth
+	 * @param url query url
+	 * @param num_images num of images to return
+	 * @return list of filled ImageItem
+	 */
 	protected List<ImageItem> GetUserMedia(String _insta_token, String url, int num_images) {
 		// Creating HTTP client
 		DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -61,7 +72,12 @@ public class InstagramApiProvider {
 		return images;
 	}
 
-	// Get userid by username
+	
+	/** Search userId by username if exist
+	 * @param insta_token instagram access token
+	 * @param username username to search
+	 * @return UserId as String
+	 */
 	protected String SearchUserId(String insta_token, String username) {
 		String user_id = null;
 		DefaultHttpClient httpClient = new DefaultHttpClient();

@@ -8,16 +8,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class InstaImageAdapter extends BaseAdapter{
 
 	private Context mContext;
 	private ArrayList<String> imageSources = new ArrayList<String>();
+	private ArrayList<Integer> imageLikes = new ArrayList<Integer>();
 	
 	public InstaImageAdapter(Context c,
-			ArrayList<String> images) {
+			ArrayList<String> images, ArrayList<Integer> likes) {
 		mContext = c;
 		imageSources = images;
+		imageLikes = likes;
 	}
 
 	@Override
@@ -46,6 +49,9 @@ public class InstaImageAdapter extends BaseAdapter{
 		
 		v = vi.inflate(R.layout.picture_item, null);
 		ImageView imageInsta = (ImageView) v.findViewById(R.id.imgCollage);
+		
+		TextView tv = (TextView) v.findViewById(R.id.textviewLikes);
+		tv.setText(imageLikes.get(position).toString() + " " + "\u2665");
 		
 		InstaApp.getImageLoader().displayImage(
 				imageSources.get(position).toString(), imageInsta);

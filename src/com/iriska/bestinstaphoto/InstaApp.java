@@ -1,6 +1,7 @@
 package com.iriska.bestinstaphoto;
 
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -29,14 +30,17 @@ public class InstaApp extends Application {
 		// configuration
 
 		DisplayImageOptions options = new DisplayImageOptions.Builder()
+		.cacheOnDisk(true)
         .cacheInMemory(true)
-        .cacheOnDisk(true)
+        .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
         .build();
 
 		
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
         .defaultDisplayImageOptions(options)
-        .build();
+        .memoryCache(new WeakMemoryCache())
+		.discCacheSize(100 * 1024 * 1024).build();
+
 		imageLoader = ImageLoader.getInstance();
 		imageLoader.init(config);
 		

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Лучшие фото</string>
+    <string name="app_name">Популярные фото</string>
     <string name="username_title">Имя пользователя</string>
     <string name="go_button">Давай коллаж</string>
     <string name="login_title">Войти в инстаграм</string>
@@ -11,5 +11,5 @@
     <string name="previous_username">preference_username</string>
     <string name="print_button">В печать</string>
     <string name="print_status">Напечатано!</string>
-    <string name="error_user_not_found">Пользователя %s не существует в Instagram</string>
+    <string name="print_title">Печать</string>
 </resources>

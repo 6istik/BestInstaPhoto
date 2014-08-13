@@ -3,18 +3,11 @@ package com.iriska.bestinstaphoto;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.print.PrintHelper;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -24,6 +17,7 @@ public class CollageActivity extends Activity {
 	Button btnPrint;
 
 	ArrayList<String> images = new ArrayList<String>();
+	ArrayList<Integer> likes = new ArrayList<Integer>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -31,8 +25,10 @@ public class CollageActivity extends Activity {
 		setContentView(R.layout.collage_activity);
 
 		images = getIntent().getExtras().getStringArrayList("images");
+		likes = getIntent().getExtras().getIntegerArrayList("likes");
+		
 		gvCollage = (GridView) findViewById(R.id.gvChoosePicture);
-		gvCollage.setAdapter(new InstaImageAdapter(this, images));
+		gvCollage.setAdapter(new InstaImageAdapter(this, images, likes));
 
 		btnPrint = (Button) findViewById(R.id.btnPrint);
 		btnPrint.setOnClickListener(printButtonClicked);

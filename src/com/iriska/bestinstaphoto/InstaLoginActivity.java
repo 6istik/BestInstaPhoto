@@ -34,7 +34,6 @@ public class InstaLoginActivity extends Activity {
 
 			@Override
 			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
-				//String parts[] = url.split("=");
 				if (url.contains("access_token")) {
 
 					mWebView.setEnabled(false);

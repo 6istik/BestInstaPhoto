@@ -57,5 +57,4 @@ public class MainActivity extends Activity {
 			insta.execute(username);
 		}
 	};
-
 }

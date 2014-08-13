@@ -15,32 +15,25 @@ import android.widget.Toast;
 public class InstagramImagesLoader extends
 		AsyncTask<String, ImageItem[], ImageItem[]> {
 
-	private String LOGTAG = "instadebug";
 	Context context;
 	int numofbestimages = 6;
 	ArrayList<String> sources = new ArrayList<String>();
+	ArrayList<Integer> likes = new ArrayList<Integer>();
 	EditText txtUserName;
 	Button btnGoCollage;
 	private ProgressDialog dialog;
 	boolean isErrorOccured = false;
 	String errorMessage;
-	/*
-	 * @Override protected void onPreExecute() { super.onPreExecute(); dialog =
-	 * new ProgressDialog(context); dialog.setTitle("Please wait");
-	 * dialog.show(); }
-	 */
+	List<ImageItem> images = new ArrayList<ImageItem>();
+	String accessToken;
+	
 	public InstagramImagesLoader(Context ctx, EditText userEditText, Button btnGo) {
-
 		dialog = new ProgressDialog(ctx);
 		context = ctx;
 		txtUserName = userEditText;
 		btnGoCollage = btnGo;
 	}
-
-	List<ImageItem> images = new ArrayList<ImageItem>();
-
-	String accessToken;
-
+	
 	protected void onPreExecute() {
 		accessToken = InstaApp.GetPreference().getString(InstaApp.ACCESS_TOKEN,
 				null);
@@ -62,8 +55,7 @@ public class InstagramImagesLoader extends
 					+ "/media/recent?access_token=" + accessToken + "&count=-1";
 
 			images = provider.GetUserMedia(accessToken, query, numofbestimages);
-		} else 
-		{
+		} else {
 			isErrorOccured = true;
 			errorMessage = String.format("Пользователя %s не существует в Instagram", user_name) ;
 		}
@@ -96,13 +88,17 @@ public class InstagramImagesLoader extends
 
 	private void startCollage() {
 		sources.clear();
+		likes.clear();
 		ListIterator<ImageItem> li = images.listIterator(images.size());
 		while(li.hasPrevious()) {
-			sources.add(li.previous().getSource());
+			ImageItem item = li.previous();
+			sources.add(item.getSource());
+			likes.add(item.getLikesCount());
 		}
+		
 		Intent intent = new Intent(context, CollageActivity.class);
-		//intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.putStringArrayListExtra("images", sources);
+		intent.putIntegerArrayListExtra("likes", likes);
 		context.startActivity(intent);
 	}
 }
