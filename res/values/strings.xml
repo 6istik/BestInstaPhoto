@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Лучшие фото</string>
     <string name="username_title">Имя пользователя</string>
     <string name="go_button">Давай коллаж</string>
@@ -7,5 +8,8 @@
     <string name="client_id">856005b861a74010b7c83756df17f727</string>
     <string name="redirect_uri">http://www.google.com</string>
     <string name="error_empty_username">You did not enter a username</string>
-    
-    </resources>
+    <string name="previous_username">preference_username</string>
+    <string name="print_button">В печать</string>
+    <string name="print_status">Напечатано!</string>
+    <string name="error_user_not_found">Пользователя %s не существует в Instagram</string>
+</resources>
